@@ -38,7 +38,10 @@
         "laravel": {
             "providers": [
                 "AventureCloud\\MultiTenancy\\MultiTenancyServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Tenancy": "AventureCloud\\MultiTenancy\\Facades\\Tenancy"
+            }
         }
     }
 }

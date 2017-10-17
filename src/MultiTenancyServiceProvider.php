@@ -10,7 +10,11 @@ use Illuminate\Support\ServiceProvider;
  */
 class MultiTenancyServiceProvider extends ServiceProvider
 {
-
+    /**
+     * Perform post-registration booting of services.
+     *
+     * @return void
+     */
     public function boot()
     {
         $this->publishes([
@@ -25,6 +29,9 @@ class MultiTenancyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //Bind service in IoC container
+        $this->app->singleton('tenancy', function(){
+            return new TenantManager();
+        });
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Scope;
 /**
  * Class TenantOwnedScope
  *
- * @package Ollieread\Multitenancy\Scopes
+ * @package AventureCloud\MultiTenancy\Scopes
  */
 class TenantOwnedScope implements Scope
 {

@@ -7,7 +7,7 @@ use Closure;
 /**
  * Class LoadTenant
  *
- * @package Ollieslab\Multitenancy\Middleware
+ * @package AventureCloud\MultiTenancy\Middleware
  */
 class LoadTenant
 {

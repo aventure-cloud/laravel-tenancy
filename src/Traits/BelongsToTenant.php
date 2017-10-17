@@ -5,6 +5,11 @@ namespace AventureCloud\MultiTenancy\Traits;
 use AventureCloud\MultiTenancy\Facades\Tenancy;
 use AventureCloud\MultiTenancy\Scopes\TenantOwnedScope;
 
+/**
+ * Trait BelongsToTenant
+ *
+ * @package AventureCloud\MultiTenancy\Traits
+ */
 trait BelongsToTenant
 {
     /**

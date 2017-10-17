@@ -2,9 +2,13 @@
 
 namespace AventureCloud\MultiTenancy\Facades;
 
-use AventureCloud\MultiTenancy\TenantManager;
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * Class Tenancy
+ *
+ * @package AventureCloud\MultiTenancy\Facades
+ */
 class Tenancy extends Facade
 {
     protected static function getFacadeAccessor()

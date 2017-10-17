@@ -7,7 +7,7 @@ return [
     'foreign_key' => 'company_id',
 
     // Fields used to identify a tenant
-    'indentifiers' => [
+    'identifiers' => [
         'primary' => 'slug',
         'secondary' => 'domain',
     ],

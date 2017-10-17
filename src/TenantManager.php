@@ -82,9 +82,9 @@ class TenantManager
             $primary = true;
         }
 
-        $this->tenant = (new config('multitenancy.model'))
+        $this->tenant = (new $this->config['model'])
             ->newQuery()
-            ->where($primary ? config('multitenancy.indentifiers.primary') : config('multitenancy.indentifiers.secondary'), '=', $identifier)
+            ->where($primary ? $this->config['identifiers']['primary'] : $this->config['identifiers']['secondary'], '=', $identifier)
             ->first();
 
         if (! $this->tenant) {
@@ -115,10 +115,10 @@ class TenantManager
      */
     protected function getIdentifier()
     {
-        if ($secondary = $this->tenant->{config('multitenancy.indentifiers.secondary')}) {
+        if ($secondary = $this->tenant->{$this->config['identifiers']['secondary']}) {
             return $secondary;
         } else {
-            return $this->tenant->{config('multitenancy.indentifiers.primary')}.'.'.$this->config['domain'];
+            return $this->tenant->{$this->config['identifiers']['primary']}.'.'.$this->config['domain'];
         }
     }
 }

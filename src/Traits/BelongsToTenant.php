@@ -5,7 +5,7 @@ namespace AventureCloud\MultiTenancy\Traits;
 use AventureCloud\MultiTenancy\Facades\Tenancy;
 use AventureCloud\MultiTenancy\Scopes\TenantOwnedScope;
 
-class BelongsToTenant
+trait BelongsToTenant
 {
     /**
      * Boot trait

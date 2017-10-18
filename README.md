@@ -76,7 +76,7 @@ protected function mapWebRoutes()
 ```
 
 
-##Generate links for tenant
+## Generate links for tenant
 To generate a url for a tenant based route, you can use the following method:
 ```php
 Tenancy::route($name, $paramaters = [], $absolute = false);

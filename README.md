@@ -19,13 +19,11 @@ in your configuration because it's auto-discovered from Laravel.
 
 
 ## Configuration
-To get full control of behavior of the package you need to extract 
-from package the configurable resources: config file, blade views.
+To get full control of behavior of the package you need publish the `config/multitenancy.php` file.
 
 `php artisan vendor:publish --provider="AventureCloud\MultiTenancy\MultiTenancyServiceProvider"`
 
-Use this params to configure the main attributes of the email 
-that contains the link for E-Mail verification.
+
 ```php
 
     // The foreign key for identifying tenant ownership

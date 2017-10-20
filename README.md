@@ -59,7 +59,11 @@ class Post extends Model
 ```
 
 
-## Tenant Routing
+## Load a Tenant
+There are two ways to load a tenant instance inside the service. Once a tenant instance is loaded all subsequent query will be scoped.
+
+
+### Wrapping routes
 You need to wrap all routes with tenant dependency before applying any other middleware.
 You can use the routes method by our facade that handle tenant recognition process automatically for you. 
 ```php
@@ -73,6 +77,13 @@ protected function mapWebRoutes()
             
     });
 }
+```
+
+
+### Directly from identifier
+You can load yourself a tenant instance using facade:
+```php
+Tenancy::setTenant($slug);
 ```
 
 

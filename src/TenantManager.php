@@ -5,6 +5,7 @@ use AventureCloud\MultiTenancy\Exceptions\InvalidTenantException;
 use AventureCloud\MultiTenancy\Middleware\LoadTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -30,10 +31,12 @@ class TenantManager
 
     /**
      * TenantManager constructor.
+     *
+     * @param array $config
      */
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->config = config('multitenancy');
+        $this->config = $config;
     }
 
     /**

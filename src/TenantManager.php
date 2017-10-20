@@ -47,6 +47,52 @@ class TenantManager
     }
 
     /**
+     * Load tenant instance from identifier
+     * 
+     * @param mixed $identifier
+     * @return $this
+     * @throws InvalidTenantException
+     */
+    public function setTenant($identifier)
+    {
+        $primary = false;
+
+        if (strpos($identifier, $this->config['domain']) !== false) {
+            $identifier = str_replace('.'.$this->config['domain'], '', $identifier);
+            $primary = true;
+        }
+
+        $instance = (new $this->config['model'])
+            ->newQuery()
+            ->where($primary ? $this->config['identifiers']['primary'] : $this->config['identifiers']['secondary'], '=', $identifier)
+            ->first();
+
+        if (! $instance) {
+            throw new InvalidTenantException('Invalid Tenant \''.$identifier.'\'');
+        }
+        
+        $this->tenant = $instance;
+
+        return $this;
+    }
+
+    /**
+     * Process the request and load the tenant.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws InvalidTenantException
+     */
+    public function process(Request $request)
+    {
+        $identifier = $request->route()->parameter('_multitenant_');
+
+        $this->setTenant($identifier);
+
+        $request->route()->forgetParameter('_multitenant_');
+    }
+
+    /**
      * Setup system routes that should belong to a tenant.
      *
      * @param \Closure $routes
@@ -63,35 +109,6 @@ class TenantManager
                 'middleware'    => LoadTenant::class
             ],
             $routes);
-    }
-
-    /**
-     * Process the request and load the tenant.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @throws InvalidTenantException
-     */
-    public function process(Request $request)
-    {
-        $identifier = $request->route()->parameter('_multitenant_');
-        $primary = false;
-
-        if (strpos($identifier, $this->config['domain']) !== false) {
-            $identifier = str_replace('.'.$this->config['domain'], '', $identifier);
-            $primary = true;
-        }
-
-        $this->tenant = (new $this->config['model'])
-            ->newQuery()
-            ->where($primary ? $this->config['identifiers']['primary'] : $this->config['identifiers']['secondary'], '=', $identifier)
-            ->first();
-
-        if (! $this->tenant) {
-            throw new InvalidTenantException('Invalid Tenant \''.$identifier.'\'');
-        }
-
-        $request->route()->forgetParameter('_multitenant_');
     }
 
     /**

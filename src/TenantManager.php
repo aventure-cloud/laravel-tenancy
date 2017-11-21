@@ -58,16 +58,9 @@ class TenantManager
      */
     public function setTenant($identifier)
     {
-        $primary = false;
-
-        if (strpos($identifier, $this->config['domain']) !== false) {
-            $identifier = str_replace('.'.$this->config['domain'], '', $identifier);
-            $primary = true;
-        }
-
         $instance = (new $this->config['model'])
             ->newQuery()
-            ->where($primary ? $this->config['identifiers']['primary'] : $this->config['identifiers']['secondary'], '=', $identifier)
+            ->where($this->config['identifier'], $identifier)
             ->first();
 
         if (! $instance) {
@@ -125,20 +118,6 @@ class TenantManager
      */
     public function route($name, $parameters = [], $absolute = true)
     {
-        return route($name, array_merge([$this->getIdentifier()], $parameters), $absolute);
-    }
-
-    /**
-     * Get identifier to retrieve tenant in the subsequent request
-     *
-     * @return string
-     */
-    protected function getIdentifier()
-    {
-        if ($secondary = $this->tenant->{$this->config['identifiers']['secondary']}) {
-            return $secondary;
-        } else {
-            return $this->tenant->{$this->config['identifiers']['primary']}.'.'.$this->config['domain'];
-        }
+        return route($name, array_merge([$this->config['identifier']], $parameters), $absolute);
     }
 }

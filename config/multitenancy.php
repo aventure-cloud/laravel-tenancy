@@ -6,11 +6,8 @@ return [
     // in all application models
     'foreign_key' => 'company_id',
 
-    // Fields used to identify a tenant
-    'identifiers' => [
-        'primary' => 'slug',
-        'secondary' => 'domain',
-    ],
+    // Field used to identify a tenant in the url
+    'identifier' => 'slug',
 
     // The domain used for subdomain lookup,
     // tenant could be {slug}.mydomain.com

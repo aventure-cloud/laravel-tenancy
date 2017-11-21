@@ -19,7 +19,7 @@ in your configuration because it's auto-discovered from Laravel.
 
 
 ## Configuration
-To get full control of behavior of the package you need publish the `config/multitenancy.php` file.
+To get full control of the package's behavior you need publish `config/multitenancy.php` file.
 
 `php artisan vendor:publish --provider="AventureCloud\MultiTenancy\MultiTenancyServiceProvider"`
 

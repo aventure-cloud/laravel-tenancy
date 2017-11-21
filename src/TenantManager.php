@@ -50,8 +50,35 @@ class TenantManager
     }
 
     /**
+     * Process the request and load the tenant.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @throws InvalidTenantException
+     */
+    public function process(Request $request)
+    {
+        $domain = $request->route()->parameter('_multitenant_');
+
+        $this->setTenant($this->getIdentifier($domain));
+
+        $request->route()->forgetParameter('_multitenant_');
+    }
+
+    /**
+     * Get Identifiers by domain
+     *
+     * @param string $domain
+     * @return string
+     */
+    protected function getIdentifier(string $domain)
+    {
+        return str_replace('.'.$this->config['domain'], '', $domain);
+    }
+
+    /**
      * Load tenant instance from identifier
-     * 
+     *
      * @param mixed $identifier
      * @return $this
      * @throws InvalidTenantException
@@ -66,26 +93,10 @@ class TenantManager
         if (! $instance) {
             throw new InvalidTenantException('Invalid Tenant \''.$identifier.'\'');
         }
-        
+
         $this->tenant = $instance;
 
         return $this;
-    }
-
-    /**
-     * Process the request and load the tenant.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @throws InvalidTenantException
-     */
-    public function process(Request $request)
-    {
-        $identifier = $request->route()->parameter('_multitenant_');
-
-        $this->setTenant($identifier);
-
-        $request->route()->forgetParameter('_multitenant_');
     }
 
     /**

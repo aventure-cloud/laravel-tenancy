@@ -31,10 +31,7 @@ To get full control of behavior of the package you need publish the `config/mult
     'foreign_key' => 'company_id',
 
     // Fields used to identify a tenant
-    'identifiers' => [
-        'primary' => 'slug',
-        'secondary' => 'domain',
-    ],
+    'identifier' => 'slug',
 
     // The domain used for subdomain lookup,
     // tenant could be {slug}.mydomain.com
@@ -60,7 +57,8 @@ class Post extends Model
 
 
 ## Load a Tenant
-There are two ways to load a tenant instance inside the service. Once a tenant instance is loaded all subsequent query will be scoped.
+There are two ways to load a tenant instance inside the service. Once a tenant instance is loaded 
+all subsequent query will be scoped.
 
 
 ### Wrapping routes

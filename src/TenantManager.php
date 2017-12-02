@@ -58,22 +58,11 @@ class TenantManager
      */
     public function process(Request $request)
     {
-        $domain = $request->route()->parameter('_multitenant_');
+        $identifier = $request->route()->parameter('_tenant_');
 
-        $this->setTenant($this->getIdentifier($domain));
+        $this->setTenant($identifier);
 
-        $request->route()->forgetParameter('_multitenant_');
-    }
-
-    /**
-     * Get Identifiers by domain
-     *
-     * @param string $domain
-     * @return string
-     */
-    protected function getIdentifier(string $domain)
-    {
-        return str_replace('.'.$this->config['domain'], '', $domain);
+        $request->route()->forgetParameter('_tenant_');
     }
 
     /**
@@ -108,14 +97,11 @@ class TenantManager
      */
     public function routes(\Closure $routes)
     {
-        Route::pattern('_multitenant_', '[a-z0-9.]+');
+        Route::pattern('_tenant_', '[a-z0-9.]+');
 
-        return Route::group(
-            [
-                'domain'        => '{_multitenant_}',
-                'middleware'    => LoadTenant::class
-            ],
-            $routes);
+        return Route::domain('{_tenant_}.'.$this->config['domain'])
+            ->middleware(LoadTenant::class)
+            ->group($routes);
     }
 
     /**
@@ -129,6 +115,6 @@ class TenantManager
      */
     public function route($name, $parameters = [], $absolute = true)
     {
-        return route($name, array_merge([$this->config['identifier']], $parameters), $absolute);
+        return route($name, array_merge([$this->tenant()->slug], $parameters), $absolute);
     }
 }

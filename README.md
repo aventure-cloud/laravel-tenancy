@@ -67,6 +67,7 @@ You can use the routes method by our facade that handle tenant recognition proce
 ```php
 protected function mapWebRoutes()
 {
+    // Wrap tenant routes here before every others middleware
     Tenancy::routes(function (Router $router) {
     
         Route::middleware('web')

@@ -85,6 +85,10 @@ You can load yourself a tenant instance using facade:
 Tenancy::setTenant($slug);
 ```
 
+## Events
+When a tenant is founded and stored in Tenancy service the package fire an event with attacched tenant instance:
+- TenantLoaded
+
 
 ## Generate links for tenant
 To generate a url for a tenant based route, you can use the following method:

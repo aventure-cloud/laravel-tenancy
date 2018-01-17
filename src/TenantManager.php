@@ -84,8 +84,6 @@ class TenantManager
             throw new InvalidTenantException('Invalid Tenant \''.$identifier.'\'');
         }
 
-        //$this->tenant = $instance;
-
         event(new TenantLoaded($this->tenant = $instance));
 
         return $this;

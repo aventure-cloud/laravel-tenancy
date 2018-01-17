@@ -1,6 +1,7 @@
 <?php
 namespace AventureCloud\MultiTenancy;
 
+use AventureCloud\MultiTenancy\Events\TenantLoaded;
 use AventureCloud\MultiTenancy\Exceptions\InvalidTenantException;
 use AventureCloud\MultiTenancy\Middleware\LoadTenant;
 use Illuminate\Database\Eloquent\Model;
@@ -83,7 +84,9 @@ class TenantManager
             throw new InvalidTenantException('Invalid Tenant \''.$identifier.'\'');
         }
 
-        $this->tenant = $instance;
+        //$this->tenant = $instance;
+
+        event(new TenantLoaded($this->tenant = $instance));
 
         return $this;
     }

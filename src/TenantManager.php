@@ -75,6 +75,9 @@ class TenantManager
      */
     public function setTenant($identifier)
     {
+        if(!empty($this->tenant) && $this->tenant->id === $identifier)
+            return $this;
+
         $instance = (new $this->config['model'])
             ->newQuery()
             ->where($this->config['identifier'], $identifier)

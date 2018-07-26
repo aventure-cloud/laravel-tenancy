@@ -4,92 +4,73 @@ namespace AventureCloud\MultiTenancy;
 use AventureCloud\MultiTenancy\Events\TenantLoaded;
 use AventureCloud\MultiTenancy\Exceptions\InvalidTenantException;
 use AventureCloud\MultiTenancy\Middleware\LoadTenant;
+use AventureCloud\MultiTenancy\Models\Hostname;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
-/**
- * Class TenantManager
- *
- * @package AventureCloud\MultiTenancy
- */
+
 class TenantManager
 {
-    /**
-     * The configuration for the package.
-     *
-     * @var array
-     */
-    protected $config;
-
     /**
      * Eloquent model to represent a Tenant
      *
      * @var Model
      */
-    protected $tenant;
+    protected $hostname;
 
     /**
-     * TenantManager constructor.
+     * Get Hostname
      *
-     * @param array $config
+     * @param string|null $fqdn
+     * @throws InvalidTenantException
      */
-    public function __construct(array $config)
+    public function hostname(string $fqdn = null)
     {
-        $this->config = $config;
+        $fqdn !== null
+            ? $this->identifyHostname($fqdn)
+            : $this->hostname;
+    }
+
+    /**
+     * Check if exists soma hostname record with current FQDN
+     *
+     * @param $fqdn
+     * @return Hostname
+     * @throws InvalidTenantException
+     */
+    public function identifyHostname($fqdn) : Hostname
+    {
+        $model = Hostname::where('fqdn', $fqdn)->first();
+
+        if($model){
+            $this->hostname = $model;
+        }
+
+        if (! $model) {
+            throw new InvalidTenantException("Hostname not founded for current FQDN: ".$fqdn);
+        }
+
+        event(new TenantLoaded($this->hostname->tenant));
+
+        return $this->hostname;
     }
 
     /**
      * Retrieve the current tenant.
      *
+     * @param string|null $fqdn
      * @return Model
-     */
-    public function tenant()
-    {
-        return $this->tenant;
-    }
-
-    /**
-     * Process the request and load the tenant.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
      * @throws InvalidTenantException
      */
-    public function process(Request $request)
+    public function tenant(string $fqdn = null) : Model
     {
-        $identifier = $request->route()->parameter('_tenant_');
-
-        $this->setTenant($identifier);
-
-        $request->route()->forgetParameter('_tenant_');
-    }
-
-    /**
-     * Load tenant instance from identifier
-     *
-     * @param mixed $identifier
-     * @return $this
-     * @throws InvalidTenantException
-     */
-    public function setTenant($identifier)
-    {
-        if(!empty($this->tenant) && $this->tenant->id === $identifier)
-            return $this;
-
-        $instance = (new $this->config['model'])
-            ->newQuery()
-            ->where($this->config['identifier'], $identifier)
-            ->first();
-
-        if (! $instance) {
-            throw new InvalidTenantException('Invalid Tenant \''.$identifier.'\'');
+        if($fqdn !== null){
+            $this->identifyHostname($fqdn);
         }
 
-        event(new TenantLoaded($this->tenant = $instance));
-
-        return $this;
+        return $this->hostname->tenant;
     }
 
     /**
@@ -101,24 +82,8 @@ class TenantManager
      */
     public function routes(\Closure $routes)
     {
-        Route::pattern('_tenant_', '[a-z0-9.]+');
-
-        return Route::domain('{_tenant_}.'.$this->config['domain'])
+        return Route::domain('{tenant}')
             ->middleware(LoadTenant::class)
             ->group($routes);
-    }
-
-    /**
-     * Compose route of the given path for the current tenant.
-     *
-     * @param       $name
-     * @param array $parameters
-     * @param bool  $absolute
-     *
-     * @return string
-     */
-    public function route($name, $parameters = [], $absolute = true)
-    {
-        return route($name, array_merge([$this->tenant()->slug], $parameters), $absolute);
     }
 }

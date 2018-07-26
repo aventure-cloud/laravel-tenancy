@@ -20,7 +20,7 @@ class LoadTenant
      */
     public function handle($request, Closure $next)
     {
-        Tenancy::process($request);
+        Tenancy::tenant($request->getHost());
 
         return $next($request);
     }

@@ -2,18 +2,19 @@
 
 return [
 
-    // The foreign key for identifying tenant ownership
-    // in all application models
-    'foreign_key' => 'company_id',
+    'tenant' => [
+        // The model representing a tenant
+        'model' => App\Tenant::class,
+
+        // The foreign key for identifying tenant ownership
+        // in all application models
+        'foreign_key' => env('MULTITENANCY_FOREIGN_KEY', 'company_id'),
+    ],
 
     // Field used to identify a tenant in the url
-    'identifier' => 'slug',
+    'hostname' => [
+        'default' => env('MULTITENANCY_HOSTNAME_DEFAULT', 'www.mydomain.com')
+    ],
 
-    // The domain used for subdomain lookup,
-    // tenant could be {slug}.mydomain.com
-    'domain' => env('MULTITENANCY_DOMAIN', 'mydomain.com'),
-
-    // The model representing a tenant
-    'model' => \App\Tenant::class
 
 ];

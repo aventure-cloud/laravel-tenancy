@@ -31,7 +31,7 @@ class MultiTenancyServiceProvider extends ServiceProvider
     {
         //Bind service in IoC container
         $this->app->singleton('tenancy', function(){
-            return new TenantManager(config('multitenancy'));
+            return new TenantManager();
         });
     }
 }

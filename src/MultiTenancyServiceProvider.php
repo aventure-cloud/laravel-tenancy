@@ -2,6 +2,7 @@
 namespace AventureCloud\MultiTenancy;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Class MultiTenancyServiceProvider
@@ -20,6 +21,8 @@ class MultiTenancyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/multitenancy.php' => config_path('multitenancy.php')
         ], 'config');
+
+        Route::pattern('tenant', '[a-z0-9.\-]+');
     }
 
     /**

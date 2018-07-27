@@ -8,7 +8,7 @@
 Single database Multi-Tenancy solution for Laravel applications.
 
 - **Author:** Valerio Barbera - [valerio@aventuresrl.com](mailto:valerio@aventuresrl.com)
-- **Author Website:** [www.aventuresrl.com](target="_blank":https://www.aventuresrl.com)
+- **Author Website:** [www.phpexpert.it](target="_blank":https://www.phpexpert.it)
 
 
 # Installation
@@ -26,20 +26,20 @@ To get full control of the package's behavior you need publish `config/multitena
 
 ```php
 
-    // The foreign key for identifying tenant ownership
-    // in all application models
-    'foreign_key' => 'company_id',
+    'tenant' => [
+        // The model representing a tenant
+        'model' => App\Tenant::class,
 
-    // Fields used to identify a tenant
-    'identifier' => 'slug',
+        // The foreign key for identifying tenant ownership
+        // in all application models
+        'foreign_key' => env('MULTITENANCY_FOREIGN_KEY', 'company_id'),
+    ],
 
-    // The domain used for subdomain lookup,
-    // tenant could be {slug}.mydomain.com
-    'domain' => env('MULTITENANCY_DOMAIN', 'mydomain.com'),
+    // Field used to identify a tenant in the url
+    'hostname' => [
+        'default' => env('MULTITENANCY_HOSTNAME_DEFAULT', 'www.mydomain.com')
+    ]
 
-    // The model representing a tenant
-    'model' => \App\Tenant::class
-    
 ```
 
 
@@ -57,45 +57,50 @@ class Post extends Model
 
 
 ## Load a Tenant
-There are two ways to load a tenant instance inside the service. Once a tenant instance is loaded 
+There are two ways to load a tenant instance. Once a tenant is loaded 
 all subsequent query will be scoped.
 
 
-### Wrapping routes
+## Configuring multi-tenant routes
 You need to wrap all routes with tenant dependency before applying any other middleware.
 You can use the routes method by our facade that handle tenant recognition process automatically for you. 
+
 ```php
-protected function mapWebRoutes()
+protected function mapTenantRoutes()
 {
     // Wrap tenant routes here before every others middleware
-    Tenancy::routes(function (Router $router) {
+    Tenancy::routes()->group(function () {
     
         Route::middleware('web')
             ->namespace($this->namespace)
-            ->group(base_path('routes/web.php'));
+            ->group(base_path('routes/tenant/web.php'));
             
     });
 }
 ```
 
 
-### Directly from identifier
-You can load yourself a tenant instance using facade:
+## Default routes
+Your landing page need to be loaded under your personal url, so you need to tell to the laravel how to identify 
+your general routes. In your `RoutesServiceProvider` you can modify your `map` method like:
+
 ```php
-Tenancy::setTenant($slug);
+protected function map()
+{
+
+    Route::domain(config('multitenancy.hostname.default')->group(function() {
+		$this->mapApiRoutes();
+        $this->mapWebRoutes();
+    });
+	
+}
 ```
+
+
 
 ## Events
 When a tenant is founded and stored in Tenancy service the package fire an event with attacched tenant instance:
 - TenantLoaded
-
-
-## Generate links for tenant
-To generate a url for a tenant based route, you can use the following method:
-```php
-Tenancy::route($name, $paramaters = [], $absolute = false);
-```
-`url()` methods is not currently available because it isn't working exactly as intended.
 
 
 ## LICENSE

@@ -13,7 +13,7 @@ return [
 
     // Field used to identify a tenant in the url
     'hostname' => [
-        'default' => env('MULTITENANCY_HOSTNAME_DEFAULT', 'www.mydomain.com')
+        'default' => env('MULTITENANCY_FQDN_DEFAULT', 'www.mydomain.com')
     ],
 
 

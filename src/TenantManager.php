@@ -53,7 +53,7 @@ class TenantManager
     {
         $this->hostname = Hostname::where('fqdn', $fqdn)->first();
 
-        if (! $this->hostname->exists) {
+        if (! $this->hostname) {
             throw new InvalidTenantException("Hostname not founded for current FQDN: ".$fqdn);
         }
 

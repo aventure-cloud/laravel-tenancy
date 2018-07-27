@@ -32,11 +32,12 @@ class TenantManager
      * Get Hostname
      *
      * @param string|null $fqdn
+     * @return Model
      * @throws InvalidTenantException
      */
     public function hostname(string $fqdn = null)
     {
-        $fqdn !== null
+        return $fqdn !== null
             ? $this->identifyHostname($fqdn)
             : $this->hostname;
     }

@@ -30,8 +30,7 @@ To get full control of the package's behavior you need publish `config/multitena
         // The model representing a tenant
         'model' => App\Tenant::class,
 
-        // The foreign key for identifying tenant ownership
-        // in all application models
+        // The foreign key for identifying tenant ownership in all eloqunet models
         'foreign_key' => env('MULTITENANCY_FOREIGN_KEY', 'company_id'),
     ],
 
@@ -43,7 +42,7 @@ To get full control of the package's behavior you need publish `config/multitena
 ```
 
 
-## Eloquent Model Trait
+## Eloquent Model Traits
 Attach `BelongsToTenant` trait to models that you want scope by tenant:
 
 ```php
@@ -51,14 +50,20 @@ class Post extends Model
 {
     use BelongsToTenant;
     
-    ...
+    // ...
 }
 ```
 
+And `IsTenant` trait to your eloquent model that represent the tenant entity in your app:
 
-## Load a Tenant
-There are two ways to load a tenant instance. Once a tenant is loaded 
-all subsequent query will be scoped.
+```php
+class Company extends Model 
+{
+    use IsTenant;
+    
+    // ...
+}
+```
 
 
 ## Configuring multi-tenant routes
@@ -114,10 +119,26 @@ public function store(Request $request)
 ```
 
 
+## Queue
+One drawback of sending Jobs into the Queue is that these are executed in a completely different process depending 
+on your queue configuration including redis and beanstalk.
+
+In order to assist you with tenant aware jobs, a `TenantAwareJob` is available to you. 
+Instead of applying the `SerializesModel` trait as per suggestion in the Laravel documentation, you should use this Trait instead.
+
+```php
+class ProcessPodcast implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, TenantAwareJob;
+    
+    // ...
+}
+```
+
 
 ## Events
 When a tenant is founded and stored in Tenancy service the package fire an event with attacched tenant instance:
-- TenantLoaded
+- `TenantLoaded`
 
 
 ## LICENSE

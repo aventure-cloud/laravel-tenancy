@@ -18,6 +18,7 @@ class CreateHostnamesTable extends Migration
             $table->string('fqdn')->unique();
             $table->integer(config('multitenancy.foreign_key'))->unsigned()->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             // Add tenant foreign key with auto-delete
             $tenant_class = config('multitenancy.model');

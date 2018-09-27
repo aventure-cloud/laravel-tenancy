@@ -59,7 +59,7 @@ class TenantManager
             throw new InvalidTenantException("Hostname not founded for current FQDN: ".$fqdn);
         }
 
-        event(new TenantLoaded($this->tenant = $this->hostname->tenant));
+        $this->loadTenant($this->hostname->tenant);
 
         return $this->hostname;
     }
@@ -67,13 +67,31 @@ class TenantManager
     /**
      * Retrieve the current tenant.
      *
-     * @param string|null $fqdn
      * @return Model
-     * @throws InvalidTenantException
      */
     public function tenant() : Model
     {
         return $this->tenant;
+    }
+
+    /**
+     * Load a tenant by id or eloquent model instance.
+     *
+     * @param $tenant
+     * @return $this
+     */
+    public function loadTenant($tenant)
+    {
+        if($tenant instanceof Model){
+            $this->tenant = $tenant;
+        } else {
+            $tenant_class = config('multitenancy.model');
+            $this->tenant = $tenant_class::findOrFail($tenant);
+        }
+
+        event(new TenantLoaded($this->tenant));
+
+        return $this;
     }
 
     /**

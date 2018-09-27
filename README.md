@@ -97,6 +97,23 @@ protected function map()
 ```
 
 
+## Validation Rules
+Scoping your application by tenant can cause wrong behavior of the `unique` and `exists` validation rules
+that performs a query on the database without considering tenant scope by default.
+
+This package ships with extended version of these two rules that run a query filtered by tenant.
+
+```php
+public function store(Request $request)
+{
+    $request->validate([
+        'email' => [Tenancy::unique('users', 'email')],
+        'role_id' => [Tenancy::exists('roles', 'id')]
+    ])
+}
+```
+
+
 
 ## Events
 When a tenant is founded and stored in Tenancy service the package fire an event with attacched tenant instance:

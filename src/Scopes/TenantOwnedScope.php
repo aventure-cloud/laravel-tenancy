@@ -26,4 +26,15 @@ class TenantOwnedScope implements Scope
         if(Tenancy::hostname())
             $builder->where(config('multitenancy.tenant.foreign_key'), '=', Tenancy::tenant()->id);
     }
+
+    public function extend(Builder $builder) {
+        $this->addWithoutTenancy($builder);
+    }
+
+    protected function addWithoutTenancy(Builder $builder)
+    {
+        $builder->macro('withoutTenancy', function (Builder $builder) {
+            return $builder->withoutGlobalScope($this);
+        });
+    }
 }

@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rules\Exists;
+use Illuminate\Validation\Rules\Unique;
 
 
 class TenantManager
@@ -83,5 +85,33 @@ class TenantManager
     public function routes()
     {
         return Route::domain('{tenant}')->middleware(LoadTenant::class);
+    }
+
+    /**
+     * Extends unique validation rule to filter by tenant also.
+     *
+     * @param string $table
+     * @param string $column
+     * @return mixed
+     * @throws InvalidTenantException
+     */
+    public function unique($table, $column = 'NULL') : Unique
+    {
+        return (new Unique($table, $column))
+            ->where('tenant_id', $this->tenant()->id);
+    }
+
+    /**
+     * Extends exists validation rule to filter by tenant also.
+     *
+     * @param string $table
+     * @param string $column
+     * @return mixed
+     * @throws InvalidTenantException
+     */
+    public function exists($table, $column = 'NULL') : Exists
+    {
+        return (new Exists($table, $column))
+            ->where('tenant_id', $this->tenant()->id);
     }
 }

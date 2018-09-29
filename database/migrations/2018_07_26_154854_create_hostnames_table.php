@@ -16,14 +16,14 @@ class CreateHostnamesTable extends Migration
         Schema::create('hostnames', function (Blueprint $table) {
             $table->increments('id');
             $table->string('fqdn')->unique();
-            $table->integer(config('multitenancy.foreign_key'))->unsigned()->nullable();
+            $table->integer(config('multitenancy.tenant.foreign_key'))->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             // Add tenant foreign key with auto-delete
-            $tenant_class = config('multitenancy.model');
+            $tenant_class = config('multitenancy.tenant.model');
 
-            $table->foreign(config('multitenancy.foreign_key'))
+            $table->foreign(config('multitenancy.tenant.foreign_key'))
                 ->references('id')
                 ->on((new $tenant_class)->getTable())
                 ->onDelete('cascade');
@@ -38,7 +38,7 @@ class CreateHostnamesTable extends Migration
     public function down()
     {
         Schema::table('hostnames', function (Blueprint $table){
-            $table->dropForeign('hostnames_'.config('multitenancy.foreign_key').'_foreign');
+            $table->dropForeign('hostnames_'.config('multitenancy.tenant.foreign_key').'_foreign');
         });
         Schema::dropIfExists('hostnames');
     }

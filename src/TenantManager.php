@@ -85,7 +85,7 @@ class TenantManager
         if($tenant instanceof Model){
             $this->tenant = $tenant;
         } else {
-            $tenant_class = config('multitenancy.model');
+            $tenant_class = config('multitenancy.tenant.model');
             $this->tenant = $tenant_class::findOrFail($tenant);
         }
 

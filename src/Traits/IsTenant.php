@@ -15,6 +15,6 @@ trait IsTenant
      */
     public function hostnames() : HasMany
     {
-        return $this->hasMany(Hostname::class, config('multitenancy.foreign_key'));
+        return $this->hasMany(Hostname::class, config('multitenancy.tenant.foreign_key'));
     }
 }

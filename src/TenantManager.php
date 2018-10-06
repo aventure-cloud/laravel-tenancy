@@ -17,51 +17,66 @@ use Illuminate\Validation\Rules\Unique;
 class TenantManager
 {
     /**
-     * Eloquent model that represent current Hostname
-     *
-     * @var Model
-     */
-    protected $hostname;
-
-    /**
-     * Eloquent model that represent Tenant
+     * Eloquent model that represent Tenant.
      *
      * @var Model
      */
     protected $tenant;
 
     /**
-     * Get Hostname
+     * Process request to identify a tenant.
      *
-     * @param string|null $fqdn
-     * @return Model
+     * @param Request $request
      * @throws InvalidTenantException
      */
-    public function hostname(string $fqdn = null)
+    public function process(Request $request)
     {
-        return $fqdn !== null
-            ? $this->identifyHostname($fqdn)
-            : $this->hostname;
+        try {
+            // Identify tenant from current hostname
+            $this->findByHostname($request->getHost());
+        } catch (InvalidTenantException $exception) {
+            $subdomain = array_first(explode('.', $request->getHost()));
+            $this->findByIdentifier($subdomain);
+        }
     }
 
     /**
-     * Check if exists soma hostname record with current FQDN
+     * Check if exists soma hostname record with current FQDN.
      *
      * @param $fqdn
-     * @return Hostname
+     * @return TenantManager
      * @throws InvalidTenantException
      */
-    public function identifyHostname($fqdn) : Hostname
+    public function findByHostname($fqdn)
     {
-        $this->hostname = Hostname::where('fqdn', $fqdn)->first();
+        $hostname = Hostname::where('fqdn', $fqdn)->first();
 
-        if (! $this->hostname) {
-            throw new InvalidTenantException("Hostname not founded for current FQDN: ".$fqdn);
+        if ($hostname) {
+            return $this->loadTenant($hostname->tenant);
         }
 
-        $this->loadTenant($this->hostname->tenant);
+        throw new InvalidTenantException("Hostname not founded for current FQDN: ".$fqdn);
+    }
 
-        return $this->hostname;
+    /**
+     * Find tenant by identifier.
+     *
+     * @param $identifier
+     * @return TenantManager
+     * @throws InvalidTenantException
+     */
+    public function findByIdentifier($identifier)
+    {
+        $instance = (new config('multitenancy.tenant.model'))
+            ->newQuery()
+            ->where(config('multitenancy.tenant.identifier'), $identifier)
+            ->first();
+
+        if($instance) {
+            return $this->loadTenant($instance);
+        }
+
+        throw new InvalidTenantException("Tenant not founded for identifier: ".$identifier);
     }
 
     /**
@@ -97,7 +112,6 @@ class TenantManager
     /**
      * Setup system routes that should belong to a tenant.
      *
-     * @param \Closure $routes
      * @return mixed
      */
     public function routes()
@@ -111,12 +125,11 @@ class TenantManager
      * @param string $table
      * @param string $column
      * @return mixed
-     * @throws InvalidTenantException
      */
     public function unique($table, $column = 'NULL') : Unique
     {
         return (new Unique($table, $column))
-            ->where('tenant_id', $this->tenant()->id);
+            ->where(config('multitenancy.tenant.foreign_key'), $this->tenant()->id);
     }
 
     /**
@@ -125,11 +138,10 @@ class TenantManager
      * @param string $table
      * @param string $column
      * @return mixed
-     * @throws InvalidTenantException
      */
     public function exists($table, $column = 'NULL') : Exists
     {
         return (new Exists($table, $column))
-            ->where('tenant_id', $this->tenant()->id);
+            ->where(config('multitenancy.tenant.foreign_key'), $this->tenant()->id);
     }
 }

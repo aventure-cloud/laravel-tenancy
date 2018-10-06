@@ -1,6 +1,7 @@
 <?php
 namespace AventureCloud\MultiTenancy\Middleware;
 
+use AventureCloud\MultiTenancy\Exceptions\InvalidTenantException;
 use AventureCloud\MultiTenancy\Facades\Tenancy;
 use Closure;
 use Illuminate\Support\Facades\URL;
@@ -24,8 +25,7 @@ class LoadTenant
         // Forgot tenant parameter to avoid injecting parameter into each controller
         $request->route()->forgetParameter('tenant');
 
-        // Identify tenant from current hostname
-        Tenancy::hostname($request->getHost());
+        Tenancy::process($request);
 
         // Set default value for {tenant} route parameter to avoid specifing it
         // using route() function to generate url

@@ -23,8 +23,8 @@ class TenantOwnedScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        if(Tenancy::hostname())
-            $builder->where(config('multitenancy.tenant.foreign_key'), '=', Tenancy::tenant()->id);
+        if(Tenancy::tenant())
+            $builder->where(config('multitenancy.tenant.foreign_key'), Tenancy::tenant()->id);
     }
 
     public function extend(Builder $builder) {

@@ -32,6 +32,9 @@ To get full control of the package's behavior you need publish `config/multitena
 
         // The foreign key for identifying tenant ownership in all eloqunet models
         'foreign_key' => env('MULTITENANCY_FOREIGN_KEY', 'company_id'),
+        
+        // The field of tenant model used as subdomain key
+        'identifier' => 'slug',
     ],
 
     // Field used to identify a tenant in the url

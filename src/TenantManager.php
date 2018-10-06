@@ -67,7 +67,8 @@ class TenantManager
      */
     public function findByIdentifier($identifier)
     {
-        $instance = (new config('multitenancy.tenant.model'))
+        $model = config('multitenancy.tenant.model');
+        $instance = (new $model)
             ->newQuery()
             ->where(config('multitenancy.tenant.identifier'), $identifier)
             ->first();
@@ -82,9 +83,9 @@ class TenantManager
     /**
      * Retrieve the current tenant.
      *
-     * @return Model
+     * @return null|Model
      */
-    public function tenant() : Model
+    public function tenant() : ?Model
     {
         return $this->tenant;
     }

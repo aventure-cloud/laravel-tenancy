@@ -57,7 +57,7 @@ class Post extends Model
 }
 ```
 
-And `IsTenant` trait to your eloquent model that represent the tenant entity in your app:
+Add `IsTenant` trait to your eloquent model that represent the tenant entity in your app:
 
 ```php
 class Company extends Model 

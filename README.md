@@ -7,8 +7,8 @@
 
 Single database Multi-Tenancy solution for Laravel applications.
 
-- **Author:** Valerio Barbera - [valerio@aventuresrl.com](mailto:valerio@aventuresrl.com)
-- **Author Website:** [www.phpexpert.it](target="_blank":https://www.phpexpert.it)
+- **Author:** Valerio Barbera - [support@gistmetrics.com](mailto:support@gistmetrics.com)
+- **Author Website:** [www.gistmetrics.com](target="_blank":https://www.gistmetrics.com) 
 
 
 # Installation
